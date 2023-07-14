@@ -1,0 +1,59 @@
+long t0; // time when we last changed the light
+uint8_t val; // the current state of the light
+const int ledPin = LED_BUILTIN;  // the number of the LED pin
+
+// Variables will change:
+int ledState = LOW;  // ledState used to set the LED
+
+// Generally, you should use "unsigned long" for variables that hold time
+// The value will quickly become too large for an int to store
+unsigned long previousMillis = 0;  // will store last time LED was updated
+
+// constants won't change:
+const long interval = 1000;
+
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+  t0 = millis(); // Get the current time at the start of the program
+
+  val = HIGH;
+  // Turn on both red and green LEDs
+  pinMode(ledPin, OUTPUT);
+}
+
+
+// the loop function runs over and over again forever
+void loop() {
+  long t1 = millis();
+  long dt = t1 - t0;
+  
+  if (dt >= 60000) {
+    // Stop the pattern after 60 seconds
+    digitalWrite(LED_BUILTIN, LOW);
+    while (true) {} // Loop indefinitely, keeping the LED off
+  }
+
+  if (dt % 200 < 100) {
+    // Alternate between on and off every 100 milliseconds (faster blinking)
+    digitalWrite(LED_BUILTIN, HIGH);
+  } else {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+
+    // if the LED is off turn it on and vice-versa:
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = HIGH;
+    }
+
+    // set the LED with the ledState of the variable:
+    digitalWrite(ledPin, ledState);
+  }
+   }
