@@ -1,0 +1,89 @@
+unsigned long prevMillis;          // time when we last turned an LED on/off
+const unsigned long PERIOD = 200;  // duration of each blink
+
+int NUM_RED_BLINKS = 5;   // max number of on/off cycles for the red LED
+int redBlinksSoFar = 0;   // how many on/off cycles completed for the red LED
+bool isRedLedOn = false;  // used to remember whether the red LED is currently on
+
+int NUM_GREEN_BLINKS = 8;   // max number of on/off cycles for the green LED
+int greenBlinksSoFar = 0;   // how many on/off cycles completed for the green LED
+bool isGreenLedOn = false;  // used to remember whether the red LED is currently on
+
+int NUM_YELLOW_BLINKS = 4;   // max number of on/off cycles for the yellow LED
+int yellowBlinksSoFar = 0;   // how many on/off cycles completed for the yellow LED
+bool isYellowLedOn = false;  // used to remember whether the red LED is currently on
+
+typedef void (*Task)();  // defines that a "Task" is a certain kind of function
+Task currentTask;        // used to remember what is our current task
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  currentTask = blinkRed;  // set our initial task
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  if (currentTask) {  // if we have a task...
+    currentTask();    // execute that current task
+  }
+}
+
+void blinkRed() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - prevMillis >= PERIOD) {  // have PERIOD milliseconds elapsed since last LED change?
+    if (isRedLedOn == true) {
+      ledRed(0);           // turn the red LED off
+      isRedLedOn = false;  // remember that the red LED is now off
+      redBlinksSoFar++;    // count how many times we've turned the red LED on-and-off
+    } else {
+      ledRed(1);          // turn the red LED on
+      isRedLedOn = true;  // remember that the red LED is now on
+    }
+    prevMillis = currentMillis;  // remember the time now that we just changed the LED
+  }
+  // When we're done with this task, set the next task
+  if (redBlinksSoFar >= NUM_RED_BLINKS) {
+    redBlinksSoFar = 0;         // reset the count for next time
+    currentTask = blinkGreen;  // next task is to blink the green LED
+  }
+}
+
+void blinkGreen() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - prevMillis >= PERIOD) {  // have PERIOD milliseconds elapsed since last LED change?
+    if (isGreenLedOn == true) {
+      ledGreen(0);           // turn the green LED off
+      isGreenLedOn = false;  // remember that the green LED is now off
+      greenBlinksSoFar++;    // count how many times we've turned the green LED on-and-off
+    } else {
+      ledGreen(1);          // turn the green LED on
+      isGreenLedOn = true;  // remember that the green LED is now on
+    }
+    prevMillis = currentMillis;  // remember the time now that we just changed the LED
+  }
+  // When we're done with this task, set the next task
+  if (greenBlinksSoFar >= NUM_GREEN_BLINKS) {
+    greenBlinksSoFar = 0;        // reset the count for next time
+    currentTask = blinkYellow;  // next task is to blink the yellow LED
+  }
+}
+
+void blinkYellow() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - prevMillis >= PERIOD) {  // have PERIOD milliseconds elapsed since last LED change?
+    if (isYellowLedOn == true) {
+      ledYellow(0);           // turn the yellow LED off
+      isYellowLedOn = false;  // remember that the yellow LED is now off
+      yellowBlinksSoFar++;    // count how many times we've turned the yellow LED on-and-off
+    } else {
+      ledYellow(1);          // turn the yellow LED on
+      isYellowLedOn = true;  // remember that the yellow LED is now on
+    }
+    prevMillis = currentMillis;  // remember the time now that we just changed the LED
+  }
+  // When we're done with this task, set the next task
+  if (yellowBlinksSoFar >= NUM_YELLOW_BLINKS) {
+    yellowBlinksSoFar = 0;    // reset the count for next time
+    currentTask = blinkRed;  // change this to NULL to stop repeating the sequence
+  }
+}
